@@ -1,6 +1,7 @@
 # myapp/views.py
 from rest_framework import generics
 from .models import Categories
+from .models import EtatProduit
 from .serializers import CategoriesSerializer
 
 class CategoriesListAPIView(generics.ListAPIView):
