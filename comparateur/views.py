@@ -1,38 +1,36 @@
-# views.py
-from rest_framework import generics, status
+# myapp/views.py
+from rest_framework import generics
+from .models import Categories
+from .models import EtatProduit
+from .serializers import CategoriesSerializer
+from .serializers import EtatProduitSerializer
+from rest_framework.views import APIView
+from rest_framework import status
 from rest_framework.response import Response
-from .models import Categories, Enseigne
-from .serializers import CategoriesSerializer, EnseigneSerializer
 
-class CategoriesListAPIView(generics.ListCreateAPIView):
-    queryset = Categories.objects.all()
+class CategoriesListAPIView(generics.ListAPIView):
+    queryset = Categories.getCategories()  # Récupère toutes les catégories depuis la base de données
     serializer_class = CategoriesSerializer
 
+class EtatProduitListAPIView(generics.ListAPIView):
+    queryset = EtatProduit.getEtatProduit()
+    serializer_class = EtatProduitSerializer
+
+class EtatProduitByIdListAPIView(generics.ListAPIView):
+    serializer_class = EtatProduitSerializer
+    
     def get_queryset(self):
-        return Categories.get_categories()
+        etat_id = self.kwargs['id']
+        return EtatProduit.getEtatProduitById(etat_id)
 
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class DeleteEtatProduitByIdListAPIView(APIView):
+     def delete(self, request, id):
+        try:
+            etat_produit = EtatProduit.objects.get(id_etat=id)
+        except EtatProduit.DoesNotExist:
+            return Response({"error": "Cet état de produit n'existe pas"}, status=status.HTTP_404_NOT_FOUND)
 
-    def delete(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-class EnseigneListAPIView(generics.ListCreateAPIView):  # Utilisation de ListCreateAPIView pour autoriser POST
-    queryset = Enseigne.objects.all()
-    serializer_class = EnseigneSerializer
-
-    def get_queryset(self):
-        return Enseigne.get_enseignes()
-
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        etat_produit.delete()
+        return Response({"message": "EtatProduit supprimé avec succès"}, status=status.HTTP_204_NO_CONTENT)
+    
+        
