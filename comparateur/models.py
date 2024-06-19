@@ -9,6 +9,8 @@ from django.db import models
 
 
 
+from django.db import models
+
 class Categories(models.Model):
     id_categorie = models.AutoField(db_column='ID_categorie', primary_key=True)  # Field name made lowercase.
     nom_categorie = models.CharField(db_column='Nom_categorie', max_length=255, blank=True, null=True)  # Field name made lowercase.
@@ -54,22 +56,34 @@ class Enseigne(models.Model):
         return cls.objects.all()
 
     @classmethod
-    def add_enseigne(cls, libelle, adresse, code_postal, ville, longitude, latitude, date_creation, date_modif):
-        return cls.objects.create(libelle=libelle, adresse=adresse, code_postal=code_postal, ville=ville,
-                                  longitude=longitude, latitude=latitude, date_creation_enseigne=date_creation,
-                                  date_modif_enseigne=date_modif)
+    def add_enseigne(cls, libelle, adresse, code_postal, ville, longitude, latitude, date_creation_enseigne, date_modif_enseigne):
+        return cls.objects.create(
+            libelle=libelle,
+            adresse=adresse,
+            code_postal=code_postal,
+            ville=ville,
+            longitude=longitude,
+            latitude=latitude,
+            date_creation_enseigne=date_creation_enseigne,
+            date_modif_enseigne=date_modif_enseigne
+        )
 
     @classmethod
     def delete_enseigne(cls, id_enseigne):
         return cls.objects.filter(id_enseigne=id_enseigne).delete()
 
     @classmethod
-    def update_enseigne(cls, id_enseigne, libelle, adresse, code_postal, ville, longitude, latitude, date_modif):
-        return cls.objects.filter(id_enseigne=id_enseigne).update(libelle=libelle, adresse=adresse,
-                                                                  code_postal=code_postal, ville=ville,
-                                                                  longitude=longitude, latitude=latitude,
-                                                                  date_modif_enseigne=date_modif)
-
+    def update_enseigne(cls, id_enseigne, libelle, adresse, code_postal, ville, longitude, latitude, date_creation_enseigne, date_modif_enseigne):
+        return cls.objects.filter(id_enseigne=id_enseigne).update(
+            libelle=libelle,
+            adresse=adresse,
+            code_postal=code_postal,
+            ville=ville,
+            longitude=longitude,
+            latitude=latitude,
+            date_creation_enseigne=date_creation_enseigne,
+            date_modif_enseigne=date_modif_enseigne
+        )
 
 class EtatProduit(models.Model):
     id_etat = models.AutoField(db_column='ID_etat', primary_key=True)  # Field name made lowercase.
@@ -78,25 +92,6 @@ class EtatProduit(models.Model):
     class Meta:
         managed = False
         db_table = 'Etat_Produit'
-    
-    @classmethod
-    def getEtatProduit(cls):
-        return cls.objects.all()
-    
-    @classmethod
-    def getEtatProduitById(cls,id):
-        try:
-            return cls.objects.filter(id_etat=id)
-        except cls.DoesNotExist:
-            return None
-        
-    @classmethod
-    def deleteEtatProduit(cls, id):
-        try:
-            objetEtatProduit = cls.objects.filter(id)
-            objetEtatProduit.delete()
-        except cls.DoesNotExist:
-            return None
 
 
 class PrixProduitMagasin(models.Model):
