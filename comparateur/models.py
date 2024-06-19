@@ -17,6 +17,22 @@ class Categories(models.Model):
         managed = False
         db_table = 'Categories'
 
+    @classmethod
+    def get_categories(cls):
+        return cls.objects.all()
+
+    @classmethod
+    def add_categorie(cls, nom):
+        return cls.objects.create(nom_categorie=nom)
+
+    @classmethod
+    def delete_categorie(cls, id_categorie):
+        return cls.objects.filter(id_categorie=id_categorie).delete()
+
+    @classmethod
+    def update_categorie(cls, id_categorie, nom):
+        return cls.objects.filter(id_categorie=id_categorie).update(nom_categorie=nom)
+
 
 class Enseigne(models.Model):
     id_enseigne = models.AutoField(db_column='ID_enseigne', primary_key=True)  # Field name made lowercase.
@@ -32,6 +48,27 @@ class Enseigne(models.Model):
     class Meta:
         managed = False
         db_table = 'Enseigne'
+
+    @classmethod
+    def get_enseignes(cls):
+        return cls.objects.all()
+
+    @classmethod
+    def add_enseigne(cls, libelle, adresse, code_postal, ville, longitude, latitude, date_creation, date_modif):
+        return cls.objects.create(libelle=libelle, adresse=adresse, code_postal=code_postal, ville=ville,
+                                  longitude=longitude, latitude=latitude, date_creation_enseigne=date_creation,
+                                  date_modif_enseigne=date_modif)
+
+    @classmethod
+    def delete_enseigne(cls, id_enseigne):
+        return cls.objects.filter(id_enseigne=id_enseigne).delete()
+
+    @classmethod
+    def update_enseigne(cls, id_enseigne, libelle, adresse, code_postal, ville, longitude, latitude, date_modif):
+        return cls.objects.filter(id_enseigne=id_enseigne).update(libelle=libelle, adresse=adresse,
+                                                                  code_postal=code_postal, ville=ville,
+                                                                  longitude=longitude, latitude=latitude,
+                                                                  date_modif_enseigne=date_modif)
 
 
 class EtatProduit(models.Model):

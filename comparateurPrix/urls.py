@@ -22,4 +22,5 @@ from comparateur import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('categories/', views.CategoriesListAPIView.as_view(), name='categories-list'),
 ]
