@@ -83,10 +83,10 @@ class Produits(models.Model):
     id_produit = models.AutoField(db_column='ID_produit', primary_key=True)  # Field name made lowercase.
     libelle = models.CharField(db_column='Libelle', max_length=255, blank=True, null=True)  # Field name made lowercase.
     libelle_ticket = models.CharField(db_column='Libelle_Ticket', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    prixttc = models.DecimalField(db_column='PrixTTC', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    prixttc = models.DecimalField(db_column='PrixTTC', max_digits=65535, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
     code_barre = models.CharField(db_column='Code_barre', max_length=255, blank=True, null=True)  # Field name made lowercase.
     id_categorie = models.ForeignKey(Categories, models.DO_NOTHING, db_column='ID_categorie', blank=True, null=True)  # Field name made lowercase.
-    tva = models.DecimalField(db_column='TVA', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    tva = models.DecimalField(db_column='TVA', max_digits=65535, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
     image = models.CharField(db_column='Image', max_length=255, blank=True, null=True)  # Field name made lowercase.
     id_etat = models.ForeignKey(EtatProduit, models.DO_NOTHING, db_column='Id_Etat', blank=True, null=True)  # Field name made lowercase.
     date_creation_produit = models.DateField(db_column='Date_creation_Produit', blank=True, null=True)  # Field name made lowercase.
@@ -95,6 +95,32 @@ class Produits(models.Model):
     class Meta:
         managed = False
         db_table = 'Produits'
+
+    @classmethod
+    def getProduits(cls):
+        return cls.objects.all()
+    
+    @classmethod
+    def getProduitById(cls,id):
+        try:
+            return cls.objects.filter(id_produit=id)
+        except cls.DoesNotExist:
+            return None
+    
+    @classmethod
+    def getProduitByIdCategorie(cls,id):
+        try:
+            return cls.objects.filter(id_categorie=id)
+        except cls.DoesNotExist:
+            return None
+        
+    @classmethod
+    def deleteProduit(cls, id):
+        try:
+            objetProduit = cls.objects.filter(id)
+            objetProduit.delete()
+        except cls.DoesNotExist:
+            return None
 
 
 class TypeUtilisateur(models.Model):

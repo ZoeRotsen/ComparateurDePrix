@@ -25,4 +25,12 @@ urlpatterns = [
     path('etatProduit/get/', views.EtatProduitListAPIView.as_view(), name='etatProduit-list'),
     path('etatProduit/get/<int:id>/', views.EtatProduitByIdListAPIView.as_view(), name='etatProduit-list'),
     path('etatProduit/delete/<int:id>/', views.DeleteEtatProduitByIdListAPIView.as_view(), name='etatProduit-delete'),
+    path('etatProduit/create/', views.CreateEtatProduitAPIView.as_view(), name='etatProduit-create'),
+    path('etatProduit/update/<int:id>/', views.UpdateEtatProduitAPIView.as_view(), name='etatProduit-update'),
+    path('produits/get/', views.ProduitsListAPIView.as_view(), name='produits-list'),
+    path('produits/get/<int:id>/', views.ProduitsByIdListAPIView.as_view(), name='produit-list'),
+    path('produits/get/categorie/<int:id>/', views.ProduitsByIdCategorieListAPIView.as_view(), name='produits-list'),
+    path('produits/delete/<int:id>/', views.DeleteProduitsByIdListAPIView.as_view(), name='produits-delete'),
+    path('produits/create/', views.CreateProduitsAPIView.as_view(), name='produits-create'),
+    path('produits/update/<int:id>/', views.UpdateProduitsAPIView.as_view(), name='produits-update'),
 ]
