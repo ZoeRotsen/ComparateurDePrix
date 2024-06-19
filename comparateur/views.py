@@ -32,5 +32,7 @@ class DeleteEtatProduitByIdListAPIView(APIView):
 
         etat_produit.delete()
         return Response({"message": "EtatProduit supprimé avec succès"}, status=status.HTTP_204_NO_CONTENT)
+     
+
     
         
