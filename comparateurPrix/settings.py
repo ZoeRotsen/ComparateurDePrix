@@ -77,7 +77,7 @@ WSGI_APPLICATION = 'comparateurPrix.wsgi.application'
 
 DATABASES = {
     'default': {
-         'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'comparateurPrix',
         'USER': 'postgres',
         'PASSWORD': 'root',
