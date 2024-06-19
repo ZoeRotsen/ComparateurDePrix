@@ -23,5 +23,7 @@ from comparateur import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('categories/', views.CategoriesListAPIView.as_view(), name='categories-list'),
-    path('enseignes/', views.EnseigneListAPIView.as_view(), name='enseignes-list'),
+    path('etatProduit/get/', views.EtatProduitListAPIView.as_view(), name='etatProduit-list'),
+    path('etatProduit/get/<int:id>/', views.EtatProduitByIdListAPIView.as_view(), name='etatProduit-list'),
+    path('etatProduit/delete/<int:id>/', views.DeleteEtatProduitByIdListAPIView.as_view(), name='etatProduit-delete'),
 ]

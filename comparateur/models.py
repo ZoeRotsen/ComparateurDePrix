@@ -8,6 +8,7 @@
 from django.db import models
 
 
+
 class Categories(models.Model):
     id_categorie = models.AutoField(db_column='ID_categorie', primary_key=True)  # Field name made lowercase.
     nom_categorie = models.CharField(db_column='Nom_categorie', max_length=255, blank=True, null=True)  # Field name made lowercase.
@@ -77,6 +78,25 @@ class EtatProduit(models.Model):
     class Meta:
         managed = False
         db_table = 'Etat_Produit'
+    
+    @classmethod
+    def getEtatProduit(cls):
+        return cls.objects.all()
+    
+    @classmethod
+    def getEtatProduitById(cls,id):
+        try:
+            return cls.objects.filter(id_etat=id)
+        except cls.DoesNotExist:
+            return None
+        
+    @classmethod
+    def deleteEtatProduit(cls, id):
+        try:
+            objetEtatProduit = cls.objects.filter(id)
+            objetEtatProduit.delete()
+        except cls.DoesNotExist:
+            return None
 
 
 class PrixProduitMagasin(models.Model):
