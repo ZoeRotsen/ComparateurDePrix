@@ -86,6 +86,17 @@ DATABASES = {
     }
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'comparateurprix',
+#         'USER': 'username',
+#         'PASSWORD': 'password',
+#         'HOST': '51.89.7.73',  
+#         'PORT': '5432',       
+#     }
+# }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators

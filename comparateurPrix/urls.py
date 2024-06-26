@@ -25,4 +25,8 @@ urlpatterns = [
     path('categories/<int:id_categorie>/', views.CategoriesDetailAPIView.as_view(), name='categories-detail'),
     path('enseignes/', views.EnseigneListCreateAPIView.as_view(), name='enseignes-list'),
     path('enseignes/<int:id_enseigne>/', views.EnseigneDetailAPIView.as_view(), name='enseignes-detail'),
+    path('prix-produit-magasin/', views.PrixMagasinProduitListAPIView.as_view(), name='prix_produit_magasin_list'),
+    path('prix-produit-magasin/<int:idP>/<int:idM>/', views.DeletePrixProduitMagasinByIdAPIView.as_view(), name='delete_prix_produit_magasin'),
+    path('create-prix-produit-magasin/', views.CreatePrixProduitMagasinAPIView.as_view(), name='create_prix_produit_magasin'),
+    path('update-prix-produit-magasin/<int:idP>/<int:idM>/', views.UpdatePrixProduitMagasinAPIView.as_view(), name='update_prix_produit_magasin'),
 ]
