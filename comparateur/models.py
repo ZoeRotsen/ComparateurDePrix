@@ -37,15 +37,15 @@ class Categories(models.Model):
 
 
 class Enseigne(models.Model):
-    id_enseigne = models.AutoField(db_column='ID_enseigne', primary_key=True)  # Field name made lowercase.
-    libelle = models.CharField(db_column='Libelle', max_length=127, blank=True, null=True)  # Field name made lowercase.
-    adresse = models.CharField(db_column='Adresse', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    code_postal = models.IntegerField(db_column='Code_postal', blank=True, null=True)  # Field name made lowercase.
-    ville = models.CharField(db_column='Ville', max_length=50, blank=True, null=True)  # Field name made lowercase.
-    longitude = models.DecimalField(db_column='Longitude', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
-    latitude = models.DecimalField(db_column='Latitude', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
-    date_creation_enseigne = models.DateField(db_column='Date_creation_Enseigne', blank=True, null=True)  # Field name made lowercase.
-    date_modif_enseigne = models.DateField(db_column='Date_modif_Enseigne', blank=True, null=True)  # Field name made lowercase.
+    id_enseigne = models.AutoField(db_column='ID_enseigne', primary_key=True)
+    libelle = models.CharField(db_column='Libelle', max_length=127, blank=True, null=True)
+    adresse = models.CharField(db_column='Adresse', max_length=255, blank=True, null=True)
+    code_postal = models.IntegerField(db_column='Code_postal', blank=True, null=True)
+    ville = models.CharField(db_column='Ville', max_length=50, blank=True, null=True)
+    longitude = models.DecimalField(db_column='Longitude', max_digits=9, decimal_places=6, blank=True, null=True)
+    latitude = models.DecimalField(db_column='Latitude', max_digits=9, decimal_places=6, blank=True, null=True)
+    date_creation_enseigne = models.DateField(db_column='Date_creation_Enseigne', auto_now_add=True)
+    date_modif_enseigne = models.DateField(db_column='Date_modif_Enseigne', auto_now=True)
 
     class Meta:
         managed = False
@@ -56,16 +56,14 @@ class Enseigne(models.Model):
         return cls.objects.all()
 
     @classmethod
-    def add_enseigne(cls, libelle, adresse, code_postal, ville, longitude, latitude, date_creation_enseigne, date_modif_enseigne):
+    def add_enseigne(cls, libelle, adresse, code_postal, ville, longitude, latitude):
         return cls.objects.create(
             libelle=libelle,
             adresse=adresse,
             code_postal=code_postal,
             ville=ville,
             longitude=longitude,
-            latitude=latitude,
-            date_creation_enseigne=date_creation_enseigne,
-            date_modif_enseigne=date_modif_enseigne
+            latitude=latitude
         )
 
     @classmethod
@@ -73,16 +71,14 @@ class Enseigne(models.Model):
         return cls.objects.filter(id_enseigne=id_enseigne).delete()
 
     @classmethod
-    def update_enseigne(cls, id_enseigne, libelle, adresse, code_postal, ville, longitude, latitude, date_creation_enseigne, date_modif_enseigne):
+    def update_enseigne(cls, id_enseigne, libelle, adresse, code_postal, ville, longitude, latitude):
         return cls.objects.filter(id_enseigne=id_enseigne).update(
             libelle=libelle,
             adresse=adresse,
             code_postal=code_postal,
             ville=ville,
             longitude=longitude,
-            latitude=latitude,
-            date_creation_enseigne=date_creation_enseigne,
-            date_modif_enseigne=date_modif_enseigne
+            latitude=latitude
         )
 
 class EtatProduit(models.Model):
