@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-%mz%)m#1xw2nis#m=geh-02u5*f5g%d0m1@v1$juu#kuxm*%fb
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -75,14 +75,25 @@ WSGI_APPLICATION = 'comparateurPrix.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#          'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'comparateurPrix',
+#         'USER': 'postgres',
+#         'PASSWORD': 'root',
+#         'HOST': 'localhost',  
+#         'PORT': '5432',       
+#     }
+# }
+
 DATABASES = {
     'default': {
-         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'comparateurPrix',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
         'USER': 'postgres',
-        'PASSWORD': 'root',
-        'HOST': 'localhost',  
-        'PORT': '5432',       
+        'PASSWORD': 'postgres',
+        'HOST': 'db',  # Utilisez le nom du service Docker
+        'PORT': '5432',
     }
 }
 
@@ -127,3 +138,15 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+import os
+
+# ... autres paramètres ...
+
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Assurez-vous que STATICFILES_DIRS est défini si vous avez des dossiers statiques supplémentaires
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
