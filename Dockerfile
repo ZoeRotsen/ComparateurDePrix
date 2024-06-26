@@ -41,7 +41,7 @@ RUN chmod +x wait-for-db.sh
 RUN python manage.py collectstatic --noinput
 
 # Exposer le port sur lequel l'application Django s'exécutera
-EXPOSE 8000
+EXPOSE 8001
 
 # Commande pour démarrer l'application
 CMD ["./wait-for-db.sh", "db","python", "manage.py", "runserver", "0.0.0.0:8001"]
