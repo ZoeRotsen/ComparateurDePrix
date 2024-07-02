@@ -34,12 +34,25 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'comparateur',
     'rest_framework',
+    'rest_framework_simplejwt.token_blacklist',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
+    'drf_yasg',
 ]
+
+#Django utilisera les jetons pour l'authentification
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+#Utilisation du modèle Utilisateurs personnalisé pour l'authentification
+#AUTH_USER_MODEL = 'comparateur.Utilisateurs'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -48,10 +61,13 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 ROOT_URLCONF = 'comparateurPrix.urls'
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 TEMPLATES = [
     {
