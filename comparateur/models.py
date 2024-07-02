@@ -176,6 +176,13 @@ class Produits(models.Model):
             return cls.objects.filter(id_produit=id)
         except cls.DoesNotExist:
             return None
+
+    @classmethod  
+    def getProduitsByName(cls,libelle):
+        try:
+            return cls.objects.filter(libelle__icontains=libelle)
+        except cls.DoesNotExist:
+            return None
     
     @classmethod
     def getProduitByIdCategorie(cls,id):

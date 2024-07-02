@@ -13,6 +13,10 @@ class CategoriesSerializer(serializers.ModelSerializer):
         model = Categories
         fields = ['id_categorie', 'nom_categorie']
 
+        extra_kwargs = {
+            'nom_categorie': {'required': True},
+        }
+
 
 class EnseigneSerializer(serializers.ModelSerializer):
     class Meta:
@@ -21,6 +25,12 @@ class EnseigneSerializer(serializers.ModelSerializer):
             'id_enseigne', 'libelle', 'adresse', 'code_postal', 'ville', 
             'longitude', 'latitude', 'date_creation_enseigne', 'date_modif_enseigne'
         ]
+        extra_kwargs = {
+            'libelle': {'required': True},
+            'adresse': {'required': True},
+            'code_postal': {'required': True},
+            'ville': {'required': True},
+        }
 
 class PrixProduitMagasinSerializer(serializers.ModelSerializer):
     class Meta:
@@ -34,19 +44,20 @@ class PrixProduitMagasinSerializer(serializers.ModelSerializer):
             'date_modif_prix_produit_magasin'
         ]
 
-class CategoriesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Categories
-        fields = ['id_categorie', 'nom_categorie']
-
         extra_kwargs = {
-            'nom_categorie': {'required': True},
+            'id_produit': {'required': True},
+            'id_magasin': {'required': True},
+            'prix': {'required': True},
         }
 
 class EtatProduitSerializer(serializers.ModelSerializer):
     class Meta:
         model = EtatProduit
         fields = ['id_etat', 'libelle_etat']
+
+        extra_kwargs = {
+            'libelle_etat': {'required': True},
+        }
 
 class ProduitsSerializer(serializers.ModelSerializer):
     class Meta:

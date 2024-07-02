@@ -32,7 +32,23 @@ class EstLambdaConnecte(BasePermission):
             return False
 
         # Vérifier si l'utilisateur appartient au groupe spécifique
-        group_name = 'lambda_connecté'  # Remplacez par le nom de votre groupe
+        group_name = 'lambda_connecté' 
+        try:
+            group = Group.objects.get(name=group_name)
+        except Group.DoesNotExist:
+            return False
+
+        return request.user.groups.filter(name=group_name).exists()
+    
+class EstCertifie(BasePermission):
+    #Permission personnalisée pour vérifier si l'utilisateur appartient au groupe lambda connecté
+    def has_permission(self, request, view):
+        # Vérifier si l'utilisateur est connecté
+        if not request.user.is_authenticated:
+            return False
+
+        # Vérifier si l'utilisateur appartient au groupe spécifique
+        group_name = 'certifié' 
         try:
             group = Group.objects.get(name=group_name)
         except Group.DoesNotExist:
@@ -56,12 +72,21 @@ class EstAdministrateur(BasePermission):
 
         return request.user.groups.filter(name=group_name).exists()
     
+class EstAdministrateurOuCertifie(BasePermission):
+#Permission personnalisée pour vérifier si l'utilisateur appartient au groupe administrateur ou au groupe certifié
+    def has_permission(self, request, view):
+        if not request.user.is_authenticated:
+            return False
+        
+        allowed_groups = ['administrateur', 'certifié']
+        return any(request.user.groups.filter(name=group_name).exists() for group_name in allowed_groups)
+    
 #Table Catégories
 class CategoriesListAPIView(generics.ListAPIView):
     queryset = Categories.get_categories()
     serializer_class = CategoriesSerializer
 
-#Récupération d'une enseigne par l'id
+#Récupération d'une catégorie par l'id
 class CategoriesByIdListAPIView(generics.ListAPIView):
     serializer_class = CategoriesSerializer
     
@@ -70,6 +95,7 @@ class CategoriesByIdListAPIView(generics.ListAPIView):
         return Categories.get_categorie_by_id(id_categorie)
 
 class CreateCategoriesListAPIView(APIView):
+    permission_classes = [IsAuthenticated,EstAdministrateur]
     @swagger_auto_schema(request_body=CategoriesSerializer)
     def post(self, request, *args, **kwargs):
         nom_categorie = request.data.get('nom_categorie')
@@ -82,6 +108,7 @@ class CreateCategoriesListAPIView(APIView):
         return Response({'detail': 'Invalid data'}, status=status.HTTP_400_BAD_REQUEST)
 
 class UpdateCategoriesDetailAPIView(APIView):
+    permission_classes = [IsAuthenticated,EstAdministrateur]
     queryset = Categories.get_categories()
     serializer_class = CategoriesSerializer
     lookup_field = 'id_categorie'
@@ -104,6 +131,7 @@ class UpdateCategoriesDetailAPIView(APIView):
     
 
 class DeleteCategoriesDetailAPIView(APIView):
+    permission_classes = [IsAuthenticated,EstAdministrateur]
     queryset = Categories.get_categories()
     serializer_class = CategoriesSerializer
     lookup_field = 'id_categorie'
@@ -128,6 +156,8 @@ class EnseigneByIdListAPIView(generics.ListAPIView):
         return Enseigne.get_enseignes_by_id(id_enseigne)
     
 class CreateEnseigneAPIView(APIView):
+    permission_classes = [IsAuthenticated,EstAdministrateurOuCertifie]
+    @swagger_auto_schema(request_body=EnseigneSerializer)
     def post(self, request, *args, **kwargs):
         data = request.data.copy()  # On récupère une copie des données
         data['date_creation_enseigne'] = timezone.now().date()  # On met à jour avec la date actuelle
@@ -152,9 +182,11 @@ class CreateEnseigneAPIView(APIView):
 
 
 class UpdateEnseigneDetailAPIView(APIView):
+    permission_classes = [IsAuthenticated,EstAdministrateurOuCertifie]
     queryset = Enseigne.get_enseignes()
     lookup_field = 'id_enseigne'
 
+    @swagger_auto_schema(request_body=EnseigneSerializer)
     def put(self, request, *args, **kwargs):
         id = kwargs.get('id_enseigne')
         try:
@@ -183,10 +215,12 @@ class UpdateEnseigneDetailAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class DeleteEnseigneDetailAPIView(APIView):
+    permission_classes = [IsAuthenticated,EstAdministrateur]
     queryset = Enseigne.get_enseignes()
     serializer_class = EnseigneSerializer
     lookup_field = 'id_enseigne'
 
+    @swagger_auto_schema(request_body=EnseigneSerializer)
     def delete(self, request, *args, **kwargs):
         id_enseigne = kwargs.get('id_enseigne')
         Enseigne.delete_enseigne(id_enseigne)
@@ -208,6 +242,8 @@ class PrixProduitMagasinByIdsListAPIView(generics.ListAPIView):
     
 # Suppression d'un prix de produit par l'id
 class DeletePrixProduitMagasinByIdAPIView(APIView):
+    permission_classes = [IsAuthenticated,EstCertifie]
+    @swagger_auto_schema(request_body=PrixProduitMagasinSerializer)
     def delete(self, request, idP, idM, *args, **kwargs):
         try:
             prix_produit_magasin = PrixProduitMagasin.objects.get(id_produit=idP, id_magasin=idM)
@@ -220,6 +256,8 @@ class DeletePrixProduitMagasinByIdAPIView(APIView):
     
 # Création d'un prix de produit
 class CreatePrixProduitMagasinAPIView(APIView):
+    permission_classes = [IsAuthenticated,EstAdministrateurOuCertifie]
+    @swagger_auto_schema(request_body=PrixProduitMagasinSerializer)
     def post(self, request, *args, **kwargs):
         data = request.data.copy()  # On récupère une copie des données
         data['date_creation_prix_produit_magasin'] = timezone.now().date() #On met à jour avec la date actuelle
@@ -242,6 +280,8 @@ class CreatePrixProduitMagasinAPIView(APIView):
 
 # Mise à jour d'un prix de produit par l'id
 class UpdatePrixProduitMagasinAPIView(APIView):
+    permission_classes = [IsAuthenticated,EstAdministrateurOuCertifie]
+    @swagger_auto_schema(request_body=PrixProduitMagasinSerializer)
     def put(self, request, idP, idM, *args, **kwargs):
         try:
             prix_produit_magasin = get_object_or_404(PrixProduitMagasin, id_produit=idP, id_magasin=idM)
@@ -268,24 +308,24 @@ class EtatProduitByIdListAPIView(generics.ListAPIView):
     serializer_class = EtatProduitSerializer
     
     def get_queryset(self):
-        etat_id = self.kwargs['id']
+        etat_id = self.kwargs['id_etat']
         return EtatProduit.getEtatProduitById(etat_id)
 
 #Suppression de l'état produit par l'id
 class DeleteEtatProduitByIdListAPIView(APIView):
-    permission_classes = [IsAuthenticated,EstLambdaConnecte]
-    def delete(self, request, id):
+    permission_classes = [IsAuthenticated,EstCertifie]
+    def delete(self, request, id_etat):
         try:
-            etat_produit = EtatProduit.objects.get(id_etat=id)
+            etat_produit = EtatProduit.objects.get(id_etat=id_etat)
         except EtatProduit.DoesNotExist:
             return Response({"error": "Cet état de produit n'existe pas"}, status=status.HTTP_404_NOT_FOUND)
 
         etat_produit.delete()
-        return Response({"message": "EtatProduit supprimé avec succès"}, status=status.HTTP_204_NO_CONTENT)
+        return Response({"message": "Etat du produit supprimé avec succès"}, status=status.HTTP_204_NO_CONTENT)
 
 #Création d'un état produit
 class CreateEtatProduitAPIView(APIView):
-    permission_classes = [IsAuthenticated,EstLambdaConnecte]
+    permission_classes = [IsAuthenticated,EstCertifie]
     @swagger_auto_schema(request_body=EtatProduitSerializer)
     def post(self, request, *args, **kwargs):
         serializer = EtatProduitSerializer(data=request.data)
@@ -299,9 +339,9 @@ class CreateEtatProduitAPIView(APIView):
 class UpdateEtatProduitAPIView(APIView):
     permission_classes = [IsAuthenticated,EstLambdaConnecte]
     @swagger_auto_schema(request_body=EtatProduitSerializer)
-    def put(self, request, id, *args, **kwargs):
+    def put(self, request, id_etat, *args, **kwargs):
         try:
-             etat_produit = get_object_or_404(EtatProduit, id_etat=id)
+             etat_produit = get_object_or_404(EtatProduit, id_etat=id_etat)
         except EtatProduit.DoesNotExist:
             return Response({"error": "Cet état de produit n'existe pas"}, status=status.HTTP_404_NOT_FOUND)
         
@@ -323,23 +363,30 @@ class ProduitsByIdListAPIView(generics.ListAPIView):
     serializer_class = ProduitsSerializer
     
     def get_queryset(self):
-        id_produit = self.kwargs['id']
+        id_produit = self.kwargs['id_produit']
         return Produits.getProduitById(id_produit)
+    
+#Récupération d'un produit par le nom
+class ProduitsByNameListAPIView(generics.ListAPIView):
+    serializer_class = ProduitsSerializer
+    def get_queryset(self):
+        libelle = self.kwargs['libelle']
+        return Produits.getProduitsByName(libelle)
     
 #Récupération d'un produit par l'id de la catégorie
 class ProduitsByIdCategorieListAPIView(generics.ListAPIView):
     serializer_class = ProduitsSerializer
     
     def get_queryset(self):
-        id_categorie = self.kwargs['id']
+        id_categorie = self.kwargs['id_categorie']
         return Produits.getProduitByIdCategorie(id_categorie)
     
 #Suppression d'un produit par l'id
 class DeleteProduitsByIdListAPIView(APIView):
-    permission_classes = [IsAuthenticated,EstLambdaConnecte]
-    def delete(self, request, id):
+    permission_classes = [IsAuthenticated,EstCertifie]
+    def delete(self, request, id_produit):
         try:
-            produit = Produits.objects.get(id_produit=id)
+            produit = Produits.objects.get(id_produit=id_produit)
         except Produits.DoesNotExist:
             return Response({"error": "Ce produit n'existe pas"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -348,6 +395,7 @@ class DeleteProduitsByIdListAPIView(APIView):
 
 #Création d'un produit
 class CreateProduitsAPIView(APIView):
+    permission_classes = [IsAuthenticated,EstAdministrateurOuCertifie]
     @swagger_auto_schema(request_body=ProduitsSerializer)
     def post(self, request, *args, **kwargs):
         data = request.data.copy()  # On récupère une copie des données
@@ -363,7 +411,7 @@ class CreateProduitsAPIView(APIView):
 
 #Mise à jour d'un produit par l'id
 class UpdateProduitsAPIView(APIView):
-    permission_classes = [IsAuthenticated,EstLambdaConnecte]
+    permission_classes = [IsAuthenticated,EstAdministrateurOuCertifie]
     @swagger_auto_schema(request_body=ProduitsSerializer)
     def put(self, request, id_produit, *args, **kwargs):
         try:
@@ -413,7 +461,7 @@ class CreateUtilisateursAPIView(APIView):
 
 #Création d'un utilisateur qui est directement ajouté au groupe lamda_connecté
 class CreateLambdaConnecteAPIView(APIView):
-    permission_classes = [IsAuthenticated,EstLambdaConnecte]
+    
     @swagger_auto_schema(request_body=UserSerializer)
     def post(self, request):
         serializer = UserSerializer(data=request.data)
@@ -437,6 +485,47 @@ class CreateLambdaConnecteAPIView(APIView):
 
             # Ajouter l'utilisateur au groupe spécifique
             group_name = 'lambda_connecté' 
+            try:
+                group = Group.objects.get(name=group_name)
+                user.groups.add(group)
+            except Group.DoesNotExist:
+                # Gérer l'erreur si le groupe spécifié n'existe pas
+                return Response({'error': f'Le groupe "{group_name}" n\'existe pas.'}, status=status.HTTP_404_NOT_FOUND)
+
+            # Vous pouvez ajouter d'autres champs personnalisés ici
+
+            # Renvoyer une réponse avec les détails de l'utilisateur créé
+            return Response({'message': 'Utilisateur créé avec succès', 'user_id': user.id}, status=status.HTTP_201_CREATED)
+        else:
+            # Si les données ne sont pas valides, renvoyer les erreurs
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+#Création d'un utilisateur qui est directement ajouté au groupe certifié
+class CreateCertifieAPIView(APIView):
+    permission_classes = [IsAuthenticated,EstAdministrateur]
+    @swagger_auto_schema(request_body=UserSerializer)
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            # Récupérer les données validées
+            email = serializer.validated_data['email']
+            password = serializer.validated_data['password']
+            username = serializer.validated_data['username']
+            nom = serializer.validated_data.get('last_name', '')  # Optional fields
+            prenom = serializer.validated_data.get('first_name', '')  # Optional fields
+
+            # Créer l'utilisateur en utilisant CustomUserManager
+            user = User.objects.create_user(email=email, password=password, username=username)
+
+            # Set optional fields if available
+            user.first_name = prenom
+            user.last_name = nom
+
+            # Save user object
+            user.save()
+
+            # Ajouter l'utilisateur au groupe spécifique
+            group_name = 'certifié' 
             try:
                 group = Group.objects.get(name=group_name)
                 user.groups.add(group)
