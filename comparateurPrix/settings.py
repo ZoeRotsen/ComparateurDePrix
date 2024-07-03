@@ -94,11 +94,11 @@ WSGI_APPLICATION = 'comparateurPrix.wsgi.application'
 DATABASES = {
     'default': {
          'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'comparateurPrix',
+        'NAME': 'postgres',
         'USER': 'postgres',
-        'PASSWORD': 'root',
-        'HOST': 'localhost',  
-        'PORT': '5432',       
+        'PASSWORD': 'postgres',
+        'HOST': '51.89.7.73',  
+        'PORT': '5436',       
     }
 }
 
