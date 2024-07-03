@@ -105,14 +105,13 @@ WSGI_APPLICATION = 'comparateurPrix.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'db',  # Utilisez le nom du service Docker
-        'PORT': '5433',
+        'NAME': 'postgres',    # Nom de votre base de données
+        'USER': 'postgres',         # Utilisateur PostgreSQL
+        'PASSWORD': 'postgres',        # Mot de passe PostgreSQL (vide dans cet exemple)
+        'HOST': '51.89.7.73',  # Adresse IP de votre serveur PostgreSQL
+        'PORT': '5436',        # Port PostgreSQL
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -160,9 +159,9 @@ import os
 # ... autres paramètres ...
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+#STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Assurez-vous que STATICFILES_DIRS est défini si vous avez des dossiers statiques supplémentaires
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
+#STATICFILES_DIRS = [
+    #os.path.join(BASE_DIR, 'static'),
+#]

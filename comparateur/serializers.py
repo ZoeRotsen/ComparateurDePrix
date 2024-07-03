@@ -40,6 +40,7 @@ class PrixProduitMagasinSerializer(serializers.ModelSerializer):
             'id_produit',
             'id_magasin',
             'prix',
+            'tva',
             'date_creation_prix_produit_magasin',
             'date_modif_prix_produit_magasin'
         ]
@@ -48,6 +49,7 @@ class PrixProduitMagasinSerializer(serializers.ModelSerializer):
             'id_produit': {'required': True},
             'id_magasin': {'required': True},
             'prix': {'required': True},
+            
         }
 
 class EtatProduitSerializer(serializers.ModelSerializer):
@@ -62,7 +64,7 @@ class EtatProduitSerializer(serializers.ModelSerializer):
 class ProduitsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Produits
-        fields = ['id_produit','libelle','libelle_ticket','prixttc','code_barre','id_categorie','tva','image','id_etat','date_creation_produit','date_modif_produit']
+        fields = ['id_produit','libelle','libelle_ticket','code_barre','id_categorie','image','id_etat','date_creation_produit','date_modif_produit']
 
         extra_kwargs = {
             'libelle': {'required': True},

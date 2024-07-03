@@ -134,6 +134,7 @@ class PrixProduitMagasin(models.Model):
     id_produit = models.ForeignKey('Produits', models.DO_NOTHING, db_column='ID_produit', blank=True, null=True)  # Field name made lowercase.
     id_magasin = models.ForeignKey(Enseigne, models.DO_NOTHING, db_column='ID_magasin', blank=True, null=True)  # Field name made lowercase.
     prix = models.DecimalField(db_column='Prix', max_digits=65535, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
+    tva = models.DecimalField(db_column='TVA', max_digits=65535, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
     date_creation_prix_produit_magasin = models.DateField(db_column='Date_creation_prix_Produit_Magasin', blank=True, null=True)  # Field name made lowercase.
     date_modif_prix_produit_magasin = models.DateField(db_column='Date_modif_prix_Produit_Magasin', blank=True, null=True)  # Field name made lowercase.
 
@@ -153,10 +154,8 @@ class Produits(models.Model):
     id_produit = models.AutoField(db_column='ID_produit', primary_key=True)  # Field name made lowercase.
     libelle = models.CharField(db_column='Libelle', max_length=255, blank=True, null=True,)  # Field name made lowercase.
     libelle_ticket = models.CharField(db_column='Libelle_Ticket', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    prixttc = models.DecimalField(db_column='PrixTTC', max_digits=65535, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
     code_barre = models.CharField(db_column='Code_barre', max_length=255, blank=True, null=True)  # Field name made lowercase.
     id_categorie = models.ForeignKey(Categories, models.DO_NOTHING, db_column='ID_categorie', blank=True, null=True)  # Field name made lowercase.
-    tva = models.DecimalField(db_column='TVA', max_digits=65535, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
     image = models.CharField(db_column='Image', max_length=255, blank=True, null=True)  # Field name made lowercase.
     id_etat = models.ForeignKey(EtatProduit, models.DO_NOTHING, db_column='Id_Etat', blank=True, null=True)  # Field name made lowercase.
     date_creation_produit = models.DateField(db_column='Date_creation_Produit', blank=True, null=True)  # Field name made lowercase.
@@ -235,44 +234,154 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 
-class Utilisateurs(AbstractBaseUser):
-    id = models.AutoField(db_column='Id', primary_key=True)  # Field name made lowercase.
+
+class Utilisateurs(models.Model):
+    id_utilisateur = models.AutoField(db_column='ID_utilisateur', primary_key=True)  # Field name made lowercase.
     nom = models.CharField(db_column='Nom', max_length=255, blank=True, null=True)  # Field name made lowercase.
     prenom = models.CharField(db_column='Prenom', max_length=255, blank=True, null=True)  # Field name made lowercase.
     email = models.CharField(db_column='Email', unique=True, max_length=255, blank=True, null=True)  # Field name made lowercase.
-    password = models.CharField(db_column='Password', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    mot_de_passe = models.CharField(db_column='Mot_de_passe', max_length=255, blank=True, null=True)  # Field name made lowercase.
     id_type_utilisateur = models.ForeignKey(TypeUtilisateur, models.DO_NOTHING, db_column='Id_type_utilisateur', blank=True, null=True)  # Field name made lowercase.
     date_creation_utilisateurs = models.DateField(db_column='Date_creation_Utilisateurs', blank=True, null=True)  # Field name made lowercase.
     date_modif_utilisateurs = models.DateField(db_column='Date_modif_Utilisateurs', blank=True, null=True)  # Field name made lowercase.
-    last_login = models.DateField(db_column='Last_login', blank=True, null=True) 
-    
-    is_active = models.BooleanField(default=True)
-    #Avoir accès à l'interface d'administration
-    is_staff = models.BooleanField(default=False)
-
-    objects = CustomUserManager()
-
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
 
     class Meta:
         managed = False
         db_table = 'Utilisateurs'
 
-    def __str__(self):
-        return self.email
 
-    def get_nom_complet(self):
-        return f'{self.prenom} {self.nom}'
+class AuthGroup(models.Model):
+    name = models.CharField(unique=True, max_length=150)
 
-    @property
-    def is_anonymous(self):
-        return False
+    class Meta:
+        managed = False
+        db_table = 'auth_group'
 
-    @property
-    def is_authenticated(self):
-        return True
-    
-    def check_password(self, raw_password):
-        #Vérifie si le mot de passe fourni correspond au mot de passe hashé dans la base de données.
-        return django_check_password(raw_password, self.password)
+
+class AuthGroupPermissions(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
+    permission = models.ForeignKey('AuthPermission', models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'auth_group_permissions'
+        unique_together = (('group', 'permission'),)
+
+
+class AuthPermission(models.Model):
+    name = models.CharField(max_length=255)
+    content_type = models.ForeignKey('DjangoContentType', models.DO_NOTHING)
+    codename = models.CharField(max_length=100)
+
+    class Meta:
+        managed = False
+        db_table = 'auth_permission'
+        unique_together = (('content_type', 'codename'),)
+
+
+class AuthUser(models.Model):
+    password = models.CharField(max_length=128)
+    last_login = models.DateTimeField(blank=True, null=True)
+    is_superuser = models.BooleanField()
+    username = models.CharField(unique=True, max_length=150)
+    first_name = models.CharField(max_length=150)
+    last_name = models.CharField(max_length=150)
+    email = models.CharField(max_length=254)
+    is_staff = models.BooleanField()
+    is_active = models.BooleanField()
+    date_joined = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'auth_user'
+
+
+class AuthUserGroups(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
+    group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'auth_user_groups'
+        unique_together = (('user', 'group'),)
+
+
+class AuthUserUserPermissions(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
+    permission = models.ForeignKey(AuthPermission, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'auth_user_user_permissions'
+        unique_together = (('user', 'permission'),)
+
+
+class DjangoAdminLog(models.Model):
+    action_time = models.DateTimeField()
+    object_id = models.TextField(blank=True, null=True)
+    object_repr = models.CharField(max_length=200)
+    action_flag = models.SmallIntegerField()
+    change_message = models.TextField()
+    content_type = models.ForeignKey('DjangoContentType', models.DO_NOTHING, blank=True, null=True)
+    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'django_admin_log'
+
+
+class DjangoContentType(models.Model):
+    app_label = models.CharField(max_length=100)
+    model = models.CharField(max_length=100)
+
+    class Meta:
+        managed = False
+        db_table = 'django_content_type'
+        unique_together = (('app_label', 'model'),)
+
+
+class DjangoMigrations(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    app = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
+    applied = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'django_migrations'
+
+
+class DjangoSession(models.Model):
+    session_key = models.CharField(primary_key=True, max_length=40)
+    session_data = models.TextField()
+    expire_date = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'django_session'
+
+
+class TokenBlacklistBlacklistedtoken(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    blacklisted_at = models.DateTimeField()
+    token = models.OneToOneField('TokenBlacklistOutstandingtoken', models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'token_blacklist_blacklistedtoken'
+
+
+class TokenBlacklistOutstandingtoken(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    token = models.TextField()
+    created_at = models.DateTimeField(blank=True, null=True)
+    expires_at = models.DateTimeField()
+    user = models.ForeignKey(AuthUser, models.DO_NOTHING, blank=True, null=True)
+    jti = models.CharField(unique=True, max_length=255)
+
+    class Meta:
+        managed = False
+        db_table = 'token_blacklist_outstandingtoken'
