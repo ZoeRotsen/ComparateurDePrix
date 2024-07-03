@@ -138,3 +138,4 @@ dmypy.json
 cython_debug/
 
 journal.md
+comparateur/__pychache__/
