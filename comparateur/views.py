@@ -266,17 +266,17 @@ class CreatePrixProduitMagasinAPIView(APIView):
         data['date_modif_prix_produit_magasin'] = timezone.now().date() #On met à jour avec la date actuelle
         serializer = PrixProduitMagasinSerializer(data=data)
         if serializer.is_valid():
-            try:
+            #try:
                 # Vérifiez si l'entrée existe déjà pour éviter les doublons
-                prix_produit_magasin = PrixProduitMagasin.objects.get(
-                    id_produit=serializer.validated_data['id_produit'],
-                    id_magasin=serializer.validated_data['id_magasin']
-                )
-                return Response({"error": "Cette combinaison de produit et de magasin existe déjà."}, status=status.HTTP_400_BAD_REQUEST)
-            except PrixProduitMagasin.DoesNotExist:
+                #prix_produit_magasin = PrixProduitMagasin.objects.get(
+            id_produit=serializer.validated_data['id_produit'],
+            id_magasin=serializer.validated_data['id_magasin']
+                #)
+                #return Response({"error": "Cette combinaison de produit et de magasin existe déjà."}, status=status.HTTP_400_BAD_REQUEST)
+            #except PrixProduitMagasin.DoesNotExist:
                 # Si elle n'existe pas, enregistrez la nouvelle entrée
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
