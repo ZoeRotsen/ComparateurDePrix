@@ -46,7 +46,7 @@ class PrixProduitMagasinSerializer(serializers.ModelSerializer):
         ]
 
         extra_kwargs = {
-            'id_produit': {'required': True},
+        
             'id_magasin': {'required': True},
             'prix': {'required': True},
             
@@ -88,5 +88,16 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
+
+
+class ProduitPrixSerializer(serializers.Serializer):
+    produit = ProduitsSerializer()
+    prix = PrixProduitMagasinSerializer()
+
+class ProduitPrixCategorieSerializer(serializers.Serializer):
+    produit=ProduitsSerializer()
+    prix = PrixProduitMagasinSerializer()
+    categorie=CategoriesSerializer()
+
     
 

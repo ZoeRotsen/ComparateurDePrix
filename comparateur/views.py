@@ -8,6 +8,8 @@ from .models import PrixProduitMagasin
 from django.contrib.auth.models import User
 from .serializers import CategoriesSerializer
 from .serializers import EtatProduitSerializer
+from .serializers import ProduitPrixCategorieSerializer
+from .serializers import ProduitPrixSerializer
 from .serializers import ProduitsSerializer
 from .serializers import PrixProduitMagasinSerializer
 from .serializers import EnseigneSerializer
@@ -355,31 +357,188 @@ class UpdateEtatProduitAPIView(APIView):
 #Table Produit
 #Récupération de tous les produits
 class ProduitsListAPIView(generics.ListAPIView):
-    queryset = Produits.getProduits()
-    serializer_class = ProduitsSerializer
+    serializer_class = ProduitPrixCategorieSerializer
+
+    @swagger_auto_schema(request_body=ProduitPrixCategorieSerializer)
+    def list(self, request, *args, **kwargs):
+        produits= Produits.getProduits()
+        response_data = []
+
+        for produit in produits:
+            produit_data = ProduitsSerializer(produit).data
+
+            # Récupérer le prix le plus récent
+            prix = PrixProduitMagasin.objects.filter(id_produit=produit.id_produit).order_by('-date_creation_prix_produit_magasin').first()
+            if prix:
+                prix_data = PrixProduitMagasinSerializer(prix).data
+                produit_data['prix'] = prix_data
+            else:
+                produit_data['prix'] = None
+
+            # Récupérer la catégorie
+            if produit.id_categorie:
+                categorie = Categories.objects.get(pk=produit.id_categorie.pk)
+                if categorie:
+                    categorie_data = CategoriesSerializer(categorie).data
+                    produit_data['categorie'] = categorie_data
+                else:
+                    produit_data['categorie'] = None
+            else:
+                produit_data['categorie'] = None
+                
+            response_data.append(produit_data)
+
+        return Response(response_data, status=status.HTTP_200_OK)
 
 #Récupération d'un produit par l'id
 class ProduitsByIdListAPIView(generics.ListAPIView):
-    serializer_class = ProduitsSerializer
-    
-    def get_queryset(self):
+    serializer_class = ProduitPrixCategorieSerializer
+
+    @swagger_auto_schema(responses={200: ProduitPrixCategorieSerializer(many=True)})
+    def list(self, request, *args, **kwargs):
         id_produit = self.kwargs['id_produit']
-        return Produits.getProduitById(id_produit)
+        produit= Produits.getProduitById(id_produit)
+        response_data = []
+
+        produit_data = ProduitsSerializer(produit).data
+        # Récupérer le prix le plus récent
+        prix = PrixProduitMagasin.objects.filter(id_produit=produit.id_produit).order_by('-date_creation_prix_produit_magasin').first()
+        if prix:
+            prix_data = PrixProduitMagasinSerializer(prix).data
+            produit_data['prix'] = prix_data
+        else:
+            produit_data['prix'] = None
+
+        # Récupérer la catégorie
+        if produit.id_categorie:
+            categorie = Categories.objects.get(pk=produit.id_categorie.pk)
+            if categorie:
+                categorie_data = CategoriesSerializer(categorie).data
+                produit_data['categorie'] = categorie_data
+            else:
+                produit_data['categorie'] = None
+        else:
+            produit_data['categorie'] = None
+
+        response_data.append(produit_data)
+
+        return Response(response_data, status=status.HTTP_200_OK)
     
 #Récupération d'un produit par le nom
 class ProduitsByNameListAPIView(generics.ListAPIView):
-    serializer_class = ProduitsSerializer
-    def get_queryset(self):
+    serializer_class = ProduitPrixCategorieSerializer
+    @swagger_auto_schema(request_body=ProduitPrixCategorieSerializer)
+    def list(self, request, *args, **kwargs):
         libelle = self.kwargs['libelle']
-        return Produits.getProduitsByName(libelle)
+        produits= Produits.getProduitsByName(libelle)
+        response_data = []
+
+        for produit in produits:
+            produit_data = ProduitsSerializer(produit).data
+            # Récupérer le prix le plus récent
+            prix = PrixProduitMagasin.objects.filter(id_produit=produit.id_produit).order_by('-date_creation_prix_produit_magasin').first()
+            if prix:
+                prix_data = PrixProduitMagasinSerializer(prix).data
+                produit_data['prix'] = prix_data
+            else:
+                produit_data['prix'] = None
+
+           # Récupérer la catégorie
+            if produit.id_categorie:
+                categorie = Categories.objects.get(pk=produit.id_categorie.pk)
+                if categorie:
+                    categorie_data = CategoriesSerializer(categorie).data
+                    produit_data['categorie'] = categorie_data
+                else:
+                    produit_data['categorie'] = None
+            else:
+                produit_data['categorie'] = None
+            
+            response_data.append(produit_data)
+
+        return Response(response_data, status=status.HTTP_200_OK)
+
+        
     
 #Récupération d'un produit par l'id de la catégorie
 class ProduitsByIdCategorieListAPIView(generics.ListAPIView):
-    serializer_class = ProduitsSerializer
+    serializer_class = ProduitPrixCategorieSerializer
     
-    def get_queryset(self):
+    def list(self, request, *args, **kwargs):
         id_categorie = self.kwargs['id_categorie']
-        return Produits.getProduitByIdCategorie(id_categorie)
+        produits = Produits.getProduitByIdCategorie(id_categorie)
+        response_data = []
+
+        for produit in produits:
+            produit_data = ProduitsSerializer(produit).data
+            # Récupérer le prix le plus récent
+            prix = PrixProduitMagasin.objects.filter(id_produit=produit.id_produit).order_by('-date_creation_prix_produit_magasin').first()
+            if prix:
+                prix_data = PrixProduitMagasinSerializer(prix).data
+                produit_data['prix'] = prix_data
+            else:
+                produit_data['prix'] = None
+
+           # Récupérer la catégorie
+            if produit.id_categorie:
+                categorie = Categories.objects.get(pk=produit.id_categorie.pk)
+                if categorie:
+                    categorie_data = CategoriesSerializer(categorie).data
+                    produit_data['categorie'] = categorie_data
+                else:
+                    produit_data['categorie'] = None
+            else:
+                produit_data['categorie'] = None
+            
+            response_data.append(produit_data)
+
+        return Response(response_data, status=status.HTTP_200_OK)
+
+#Création du produit avec son prix
+class CreateProduitEtPrixAPIView(APIView):
+    permission_classes = [IsAuthenticated, EstAdministrateurOuCertifie]
+
+    @swagger_auto_schema(request_body=ProduitPrixSerializer)
+    def post(self, request, *args, **kwargs):
+        data = request.data.copy()
+
+        # Ajouter la date de création/modification pour le produit et le prix
+        data['date_creation_produit'] = timezone.now().date()
+        data['date_modif_produit'] = timezone.now().date()
+        data['date_creation_prix_produit_magasin'] = timezone.now().date()
+        data['date_modif_prix_produit_magasin'] = timezone.now().date()
+
+        # Serializer pour le produit
+        produit_serializer = ProduitsSerializer(data=data)
+
+        # Serializer pour le prix de produit magasin
+        prix_serializer = PrixProduitMagasinSerializer(data=data)
+
+        if produit_serializer.is_valid():
+            if prix_serializer.is_valid():
+                # Sauvegarde du produit
+                produit = produit_serializer.save()
+                data['id_produit'] = produit.id_produit
+                # Serializer pour le prix de produit magasin avec le nouvel ID de produit
+                #try:
+                    # Vérifier si une entrée existe déjà pour éviter les doublons
+                    #PrixProduitMagasin.objects.get(
+                        #id_produit=data['id_produit'],
+                        #id_magasin=data['id_magasin']
+                    #)
+                    #return Response({"error": "Cette combinaison de produit et de magasin existe déjà."}, status=status.HTTP_400_BAD_REQUEST)
+                #except PrixProduitMagasin.DoesNotExist:
+                # Ssauvegarder le prix de produit magasin
+                prix_serializer = PrixProduitMagasinSerializer(data=data)
+                if prix_serializer.is_valid():
+                    prix_produit_magasin = prix_serializer.save()
+                    return Response({"produit": produit_serializer.data, "prix": prix_serializer.data}, status=status.HTTP_201_CREATED)
+            else:
+                return Response(prix_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(produit_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+
     
 #Suppression d'un produit par l'id
 class DeleteProduitsByIdListAPIView(APIView):
@@ -403,7 +562,6 @@ class CreateProduitsAPIView(APIView):
         data['date_modif_produit'] = timezone.now().date() #On met à jour avec la date actuelle
         serializer = ProduitsSerializer(data=data)
         if serializer.is_valid():
-            
             produit=serializer.save()
             response_data = serializer.data
             return Response(response_data, status=status.HTTP_201_CREATED)

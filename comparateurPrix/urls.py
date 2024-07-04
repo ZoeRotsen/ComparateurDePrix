@@ -70,6 +70,7 @@ urlpatterns = [
     path('produits/get/categorie/<int:id_categorie>/', views.ProduitsByIdCategorieListAPIView.as_view(), name='produits-list'),
     path('produits/delete/<int:id_produit>/', views.DeleteProduitsByIdListAPIView.as_view(), name='produits-delete'),
     path('produits/create/', views.CreateProduitsAPIView.as_view(), name='produits-create'),
+    path('produits/create/prix/', views.CreateProduitEtPrixAPIView.as_view(), name='produits-create'),
     path('produits/update/<int:id_produit>/', views.UpdateProduitsAPIView.as_view(), name='produits-update'),
     path('utilisateurs/create/', views.CreateUtilisateursAPIView.as_view(), name='utilisateurs-create'),
     path('utilisateurs/create/lambda_connecte/', views.CreateLambdaConnecteAPIView.as_view(), name='utilisateurs-create'),

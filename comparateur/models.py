@@ -27,7 +27,7 @@ class Categories(models.Model):
     @classmethod
     def get_categorie_by_id(cls,id):
         try:
-            return cls.objects.filter(id_categorie=id)
+            return cls.objects.get(id_categorie=id)
         except cls.DoesNotExist:
             return None
 
@@ -66,7 +66,7 @@ class Enseigne(models.Model):
     @classmethod
     def get_enseignes_by_id(cls,id):
         try:
-            return cls.objects.filter(id_enseigne=id)
+            return cls.objects.get(id_enseigne=id)
         except cls.DoesNotExist:
             return None
 
@@ -116,7 +116,7 @@ class EtatProduit(models.Model):
     @classmethod
     def getEtatProduitById(cls,id):
         try:
-            return cls.objects.filter(id_etat=id)
+            return cls.objects.get(id_etat=id)
         except cls.DoesNotExist:
             return None
         
@@ -131,8 +131,8 @@ class EtatProduit(models.Model):
 
 class PrixProduitMagasin(models.Model):
     id_prix_produit_magasin = models.AutoField(db_column='ID_prix_Produit_Magasin', primary_key=True)  # Field name made lowercase.
-    id_produit = models.ForeignKey('Produits', models.DO_NOTHING, db_column='ID_produit', blank=True, null=True)  # Field name made lowercase.
-    id_magasin = models.ForeignKey(Enseigne, models.DO_NOTHING, db_column='ID_magasin', blank=True, null=True)  # Field name made lowercase.
+    id_produit = models.ForeignKey('Produits', models.CASCADE, db_column='ID_produit', blank=True, null=True)  # Field name made lowercase.
+    id_magasin = models.ForeignKey(Enseigne, models.CASCADE, db_column='ID_magasin', blank=True, null=True)  # Field name made lowercase.
     prix = models.DecimalField(db_column='Prix', max_digits=65535, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
     tva = models.DecimalField(db_column='TVA', max_digits=65535, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
     date_creation_prix_produit_magasin = models.DateField(db_column='Date_creation_prix_Produit_Magasin', blank=True, null=True)  # Field name made lowercase.
@@ -155,9 +155,9 @@ class Produits(models.Model):
     libelle = models.CharField(db_column='Libelle', max_length=255, blank=True, null=True,)  # Field name made lowercase.
     libelle_ticket = models.CharField(db_column='Libelle_Ticket', max_length=255, blank=True, null=True)  # Field name made lowercase.
     code_barre = models.CharField(db_column='Code_barre', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    id_categorie = models.ForeignKey(Categories, models.DO_NOTHING, db_column='ID_categorie', blank=True, null=True)  # Field name made lowercase.
+    id_categorie = models.ForeignKey(Categories, models.CASCADE, db_column='ID_categorie', blank=True, null=True)  # Field name made lowercase.
     image = models.CharField(db_column='Image', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    id_etat = models.ForeignKey(EtatProduit, models.DO_NOTHING, db_column='Id_Etat', blank=True, null=True)  # Field name made lowercase.
+    id_etat = models.ForeignKey(EtatProduit, models.CASCADE, db_column='Id_Etat', blank=True, null=True)  # Field name made lowercase.
     date_creation_produit = models.DateField(db_column='Date_creation_Produit', blank=True, null=True)  # Field name made lowercase.
     date_modif_produit = models.DateField(db_column='Date_modif_Produit', blank=True, null=True)  # Field name made lowercase.
 
@@ -172,7 +172,7 @@ class Produits(models.Model):
     @classmethod
     def getProduitById(cls,id):
         try:
-            return cls.objects.filter(id_produit=id)
+            return cls.objects.get(id_produit=id)
         except cls.DoesNotExist:
             return None
 
