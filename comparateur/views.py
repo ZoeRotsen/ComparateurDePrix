@@ -394,6 +394,10 @@ class ProduitsListAPIView(generics.ListAPIView):
 class ProduitsByIdListAPIView(generics.ListAPIView):
     serializer_class = ProduitPrixCategorieSerializer
 
+    def get_queryset(self):
+        
+        return 
+    
     @swagger_auto_schema(responses={200: ProduitPrixCategorieSerializer(many=True)})
     def list(self, request, *args, **kwargs):
         id_produit = self.kwargs['id_produit']
@@ -427,6 +431,11 @@ class ProduitsByIdListAPIView(generics.ListAPIView):
 #Récupération d'un produit par le nom
 class ProduitsByNameListAPIView(generics.ListAPIView):
     serializer_class = ProduitPrixCategorieSerializer
+
+    def get_queryset(self):
+        
+        return 
+
     @swagger_auto_schema(request_body=ProduitPrixCategorieSerializer)
     def list(self, request, *args, **kwargs):
         libelle = self.kwargs['libelle']
@@ -463,6 +472,9 @@ class ProduitsByNameListAPIView(generics.ListAPIView):
 #Récupération d'un produit par l'id de la catégorie
 class ProduitsByIdCategorieListAPIView(generics.ListAPIView):
     serializer_class = ProduitPrixCategorieSerializer
+    def get_queryset(self):
+        
+        return 
     
     def list(self, request, *args, **kwargs):
         id_categorie = self.kwargs['id_categorie']
