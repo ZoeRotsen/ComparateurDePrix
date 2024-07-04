@@ -138,3 +138,5 @@ dmypy.json
 cython_debug/
 
 journal.md
+# ignore all pycache folders
+**/__pycache__/
