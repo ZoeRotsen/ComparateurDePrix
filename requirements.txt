@@ -8,3 +8,4 @@ djangorestframework-simplejwt==5.0.0
 django-cors-headers
 setuptools
 drf-yasg
+rest_framework_simplejwt
