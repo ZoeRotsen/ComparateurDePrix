@@ -27,7 +27,7 @@ class Categories(models.Model):
     @classmethod
     def get_categorie_by_id(cls,id):
         try:
-            return cls.objects.get(id_categorie=id)
+            return cls.objects.filter(id_categorie=id)
         except cls.DoesNotExist:
             return None
 
@@ -66,7 +66,7 @@ class Enseigne(models.Model):
     @classmethod
     def get_enseignes_by_id(cls,id):
         try:
-            return cls.objects.get(id_enseigne=id)
+            return cls.objects.filter(id_enseigne=id)
         except cls.DoesNotExist:
             return None
 
